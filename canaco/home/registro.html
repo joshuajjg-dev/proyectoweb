@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="registro-container">
+    <h2>Crear Nueva Cuenta</h2> <!--[cite: 2] -->
+    <form action="" method="POST">
+        <input type="text" name="usuario" placeholder="Usuario" required>
+        <input type="email" name="correo" placeholder="Correo electrónico" required> <!--[cite: 2] -->
+        <input type="text" name="nombre" placeholder="Nombre" required>
+        <input type="text" name="paterno" placeholder="Apellido Paterno" required> <!--[cite: 2] -->
+        <input type="text" name="materno" placeholder="Apellido Materno" required> <!--[cite: 2] -->
+        <input type="password" name="password" placeholder="Contraseña" required>
+        <input type="password" name="confirmar_password" placeholder="Confirmar contraseña" required>
+        
+        <button type="submit" class="btn">Registrarse</button> <!--[cite: 2] -->
+    </form>
+    <a href="{% url 'home:login' %}">Ya tengo cuenta - Iniciar sesión</a> <!--[cite: 2] -->
+</div>
+{% endblock content %}

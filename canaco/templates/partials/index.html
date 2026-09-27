@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- SECCIÓN SLIDER -->
+<section class="slider-section mb-5">
+    <div id="noticiasCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <!-- Aquí luego iteraremos con un for loop de Django para las noticias destacadas -->
+            <div class="carousel-item active">
+                <img src="{% static 'images/slider-default.jpg' %}" class="d-block w-100" alt="Noticia Principal">
+                <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 p-3 rounded">
+                    <h5>UNESCO abre diálogo sobre futuros culturales y nuevas tecnologías</h5>
+                    <p>El diálogo de UNESCO abordó oportunidades y retos de nuevas tecnologías para profesionales culturales.</p>
+                    <a href="#" class="btn btn-primary">Saber más</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECCIÓN NOTICIAS RECIENTES -->
+<section class="container mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>NOTICIAS RECIENTES</h2>
+        <a href="#" class="text-decoration-none">Ver todas</a>
+    </div>
+    
+    <div class="row">
+        <!-- Ejemplo de Tarjeta de Noticia (Iteraremos esto con Django después) -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <img src="{% static 'images/noticia1.jpg' %}" class="card-img-top" alt="Noticia">
+                <div class="card-body">
+                    <h5 class="card-title">Microsoft analiza cómo la IA está cambiando el modelo de trabajo</h5>
+                    <p class="text-muted small">05 Jun 2026 - Educación</p>
+                    <p class="card-text">El Work Trend Index 2026 de Microsoft describe nuevas formas de colaboración...</p>
+                </div>
+            </div>
+        </div>
+        <!-- Más tarjetas irían aquí... -->
+    </div>
+</section>
+{% endblock content %}

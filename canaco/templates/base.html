@@ -1,0 +1,27 @@
+{% load static %} <!--[cite: 2] -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Canaco - Blogy</title>
+    <!-- Vincula tus CSS de la carpeta static aquí -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    
+    <!-- Incluimos el Header[cite: 3] -->
+    {% include 'partials/header.html' %} 
+
+    <!-- Contenido dinámico de las demás páginas[cite: 3] -->
+    <main>
+        {% block content %}
+        {% endblock content %}
+    </main>
+
+    <!-- Incluimos el Footer[cite: 3] -->
+    {% include 'partials/footer.html' %} 
+
+    <!-- Vincula tus JS de la carpeta static aquí -->
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

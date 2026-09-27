@@ -1,0 +1,14 @@
+# Entornos virtuales
+canaco_env/
+venv/
+env/
+
+# Archivos de Python y Django
+__pycache__/
+*.pyc
+db.sqlite3
+.env
+
+# Archivos estáticos recolectados y subidas
+static/
+media/
