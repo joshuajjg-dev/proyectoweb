@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5 animate__animated animate__fadeIn">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1"><i class="fa-solid fa-comments text-success me-2"></i> Moderación de Comentarios</h2>
+            <p class="text-muted mb-0">Aprueba o bloquea los comentarios recibidos en las noticias.</p>
+        </div>
+    </div>
+
+    <div class="card card-custom p-4 border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Noticia</th>
+                        <th>Comentario</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for com in comentarios %}
+                    <tr>
+                        <td><span class="fw-bold text-dark"><i class="fa-solid fa-user-circle me-1 text-primary"></i> {{ com.user.username }}</span></td>
+                        <td><span class="small text-muted">{{ com.publicacion.titulo|truncatechars:30 }}</span></td>
+                        <td style="max-width: 250px;"><p class="mb-0 text-dark text-truncate">{{ com.contenido }}</p></td>
+                        <td>
+                            {% if com.estado == 'aprobado' %}
+                                <span class="badge bg-success-subtle text-success border border-success px-3 py-2 rounded-pill">Aprobado</span>
+                            {% elif com.estado == 'bloqueado' %}
+                                <span class="badge bg-danger-subtle text-danger border border-danger px-3 py-2 rounded-pill">Bloqueado</span>
+                            {% else %}
+                                <span class="badge bg-warning-subtle text-warning border border-warning px-3 py-2 rounded-pill">Pendiente</span>
+                            {% endif %}
+                        </td>
+                        <td><span class="small text-muted">{{ com.createdat|date:"d/m/Y H:i" }}</span></td>
+                        <td class="text-end">
+                            <a href="{% url 'home:aprobar_comentario' com.id %}" class="btn btn-sm btn-outline-success rounded-pill px-2 me-1" title="Aprobar"><i class="fa-solid fa-check"></i></a>
+                            <a href="{% url 'home:bloquear_comentario' com.id %}" class="btn btn-sm btn-outline-warning rounded-pill px-2 me-1" title="Bloquear"><i class="fa-solid fa-ban"></i></a>
+                            <form action="{% url 'home:eliminar_comentario' com.id %}" method="POST" class="d-inline" onsubmit="return confirm('¿Eliminar comentario permanentemente?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-2" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">No hay comentarios registrados para moderar.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

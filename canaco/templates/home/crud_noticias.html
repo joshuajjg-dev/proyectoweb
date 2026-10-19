@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5 animate__animated animate__fadeIn">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1"><i class="fa-solid fa-newspaper text-info me-2"></i> Gestión de Noticias</h2>
+            <p class="text-muted mb-0">Administra las publicaciones, borradores y contenido del portal.</p>
+        </div>
+        <a href="{% url 'home:crear_publicacion' %}" class="btn btn-success rounded-pill px-4 fw-bold shadow-sm">
+            <i class="fa-solid fa-plus me-1"></i> Nueva Publicación
+        </a>
+    </div>
+
+    <div class="card card-custom p-4 border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Noticia</th>
+                        <th>Categoría</th>
+                        <th>Autor</th>
+                        <th>Estado</th>
+                        <th>Visitas</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pub in publicaciones %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="{% if pub.imagen_portada %}{{ pub.imagen_portada.display_url }}{% else %}https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=100&q=80{% endif %}" class="rounded-3" style="width: 50px; height: 50px; object-fit: cover;" alt="">
+                                <div>
+                                    <strong class="text-dark d-block">{{ pub.titulo|truncatechars:45 }}</strong>
+                                    <span class="small text-muted"><i class="fa-regular fa-clock me-1"></i> {{ pub.createdat|date:"d/m/Y H:i" }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-light text-primary border">{{ pub.categoria.nombre|default:"Sin categoría" }}</span></td>
+                        <td><span class="small fw-semibold text-secondary"><i class="fa-solid fa-user me-1"></i> {{ pub.autor.username }}</span></td>
+                        <td>
+                            {% if pub.estado == 'publicado' %}
+                                <span class="badge bg-success-subtle text-success border border-success px-3 py-2 rounded-pill">Publicado</span>
+                            {% else %}
+                                <span class="badge bg-secondary-subtle text-secondary border border-secondary px-3 py-2 rounded-pill">Borrador</span>
+                            {% endif %}
+                        </td>
+                        <td><span class="fw-bold text-dark"><i class="fa-solid fa-eye text-muted me-1"></i> {{ pub.visitas }}</span></td>
+                        <td class="text-end">
+                            <a href="{% url 'home:editar_publicacion' pub.id %}" class="btn btn-sm btn-outline-warning rounded-pill px-3 me-1"><i class="fa-solid fa-pen"></i></a>
+                            <a href="{% url 'home:publicar_publicacion' pub.id %}" class="btn btn-sm {% if pub.estado == 'publicado' %}btn-outline-secondary{% else %}btn-outline-info{% endif %} rounded-pill px-3 me-1">
+                                {% if pub.estado == 'publicado' %}Ocultar{% else %}Publicar{% endif %}
+                            </a>
+                            <form action="{% url 'home:eliminar_publicacion' pub.id %}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar esta publicación?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3"><i class="fa-solid fa-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">No hay noticias registradas. ¡Crea la primera!</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- ESTILOS EXCLUSIVOS DEL CARRUSEL Y NOTICIAS -->
+<style>
+    .hero-slider {
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.3);
+    }
+
+    .slider-item {
+        height: 480px;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+    }
+
+    .slider-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(15,23,42,0.1) 0%, rgba(15,23,42,0.95) 100%);
+        display: flex;
+        align-items: flex-end;
+        padding: 2.5rem;
+    }
+
+    .badge-category {
+        background: #0284c7;
+        color: #ffffff;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        padding: 6px 14px;
+        border-radius: 50px;
+    }
+
+    .card-img-wrapper {
+        height: 200px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .card-img-wrapper img {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.5s ease;
+    }
+
+    .card-custom:hover .card-img-wrapper img {
+        transform: scale(1.08);
+    }
+</style>
+
+<div class="container my-4">
+
+    <!-- SECCIÓN CARRYSEL / SLIDER DESTACADO -->
+    {% if slider %}
+    <div id="carouselNoticias" class="carousel slide hero-slider mb-5 animate__animated animate__fadeIn" data-bs-ride="carousel">
+        <div class="carousel-indicators mb-4">
+            {% for pub in slider %}
+                <button type="button" data-bs-target="#carouselNoticias" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}"></button>
+            {% endfor %}
+        </div>
+
+        <div class="carousel-inner">
+            {% for pub in slider %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <div class="slider-item" style="background-image: url('{% if pub.imagen_portada %}{{ pub.imagen_portada.display_url }}{% else %}https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80{% endif %}');">
+                    <div class="slider-overlay">
+                        <div class="text-white animate__animated animate__fadeInUp">
+                            <span class="badge badge-category mb-2">{{ pub.categoria.nombre|default:"Noticia" }}</span>
+                            <h2 class="fw-bold display-6 mb-2">{{ pub.titulo }}</h2>
+                            <p class="lead text-light mb-3 d-none d-md-block opacity-75">{{ pub.resumen|truncatechars:120 }}</p>
+                            <div class="d-flex align-items-center gap-3">
+                                <a href="{% url 'home:noticia_detalle' pub.id %}" class="btn btn-info rounded-pill px-4 fw-bold">Leer Noticia <i class="fa-solid fa-arrow-right ms-1"></i></a>
+                                <span class="small text-white-50"><i class="fa-regular fa-clock me-1"></i> {{ pub.createdat|date:"d M, Y" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselNoticias" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselNoticias" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+    </div>
+    {% endif %}
+
+    <!-- ACCESOS RÁPIDOS AL PANEL (Solo Administradores/Editores) -->
+    {% if user.is_authenticated and user.is_staff %}
+    <div class="card card-custom p-4 mb-5 bg-white border-start border-4 border-info animate__animated animate__fadeInUp">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold text-dark mb-0"><i class="fa-solid fa-gauge-high text-info me-2"></i> Panel de Administración Rápida</h5>
+            <span class="badge bg-soft-info text-info border border-info px-3 py-2 rounded-pill">Operador Activo</span>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 col-md-3">
+                <a href="{% url 'home:crud_noticias' %}" class="btn btn-light w-100 py-3 text-start fw-semibold shadow-sm border"><i class="fa-solid fa-newspaper text-info me-2"></i> Noticias</a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="{% url 'home:crud_categorias' %}" class="btn btn-light w-100 py-3 text-start fw-semibold shadow-sm border"><i class="fa-solid fa-folder text-warning me-2"></i> Categorías</a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="{% url 'home:crud_comentarios' %}" class="btn btn-light w-100 py-3 text-start fw-semibold shadow-sm border"><i class="fa-solid fa-comments text-success me-2"></i> Comentarios</a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="{% url 'home:crud_usuarios' %}" class="btn btn-light w-100 py-3 text-start fw-semibold shadow-sm border"><i class="fa-solid fa-users text-danger me-2"></i> Usuarios</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- PARRILLA DE PUBLICACIONES -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-dark mb-0">Últimas Publicaciones</h3>
+        <a href="{% url 'home:categoria' %}" class="btn btn-link text-decoration-none fw-bold">Ver todas <i class="fa-solid fa-arrow-right ms-1"></i></a>
+    </div>
+
+    <div class="row g-4 mb-5">
+        {% for pub in publicaciones %}
+        <div class="col-md-4 animate__animated animate__fadeInUp">
+            <div class="card card-custom h-100">
+                <div class="card-img-wrapper">
+                    {% if pub.imagen_portada %}
+                        <img src="{{ pub.imagen_portada.display_url }}" alt="{{ pub.titulo }}">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=600&q=80" alt="Noticia predeterminada">
+                    {% endif %}
+                </div>
+                <div class="card-body p-4 d-flex flex-column">
+                    <span class="badge bg-light text-primary border mb-2 align-self-start">{{ pub.categoria.nombre|default:"General" }}</span>
+                    <h5 class="fw-bold text-dark mb-2">{{ pub.titulo|truncatechars:55 }}</h5>
+                    <p class="text-muted small mb-3 flex-grow-1">{{ pub.resumen|truncatechars:90 }}</p>
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-auto">
+                        <span class="small text-muted"><i class="fa-regular fa-calendar me-1"></i> {{ pub.createdat|date:"d/m/Y" }}</span>
+                        <a href="{% url 'home:noticia_detalle' pub.id %}" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold">Leer más</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <i class="fa-solid fa-newspaper fs-1 text-muted mb-3 d-block"></i>
+            <h5 class="text-muted">Aún no hay publicaciones en el portal.</h5>
+            {% if user.is_staff %}
+                <a href="{% url 'home:crear_publicacion' %}" class="btn btn-primary rounded-pill mt-2">+ Crear la primera noticia</a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock content %}
